@@ -8,8 +8,6 @@ float circleShape(vec2 position, float radius ) {
     return step( radius, length(position - 0.5));
 }
 
-float rectangleShape(vec2 position, vec2)
-
 void main() {    
 
     vec2 position = gl_FragCoord.xy;

@@ -2,8 +2,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 
-import vertexShader from '../shaders/basic/vertex.glsl'
-import fragmentShader from '../shaders/basic/fragment.glsl'
+import vertexShader from '../shaders/patterns/vertex.glsl'
+import fragmentShader from '../shaders/patterns/fragment.glsl'
 
 /**
  * Base
@@ -28,7 +28,7 @@ const planeGeometry = new THREE.PlaneBufferGeometry(1, 1, 32, 32)
 const planeMaterial = new THREE.ShaderMaterial({
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
-
+    // side: "dou"
     uniforms: {
         uFrequency: { value: new THREE.Vector2(10, 5) },
         uTime: { value: 0 },
@@ -70,9 +70,9 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 1
-camera.position.y = 1
-camera.position.z = 2
+camera.position.x = 0
+camera.position.y = 0
+camera.position.z = 1.5
 scene.add(camera)
 
 // Controls
