@@ -1,6 +1,6 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
 const path = require('path')
 
 module.exports = {
@@ -16,7 +16,7 @@ module.exports = {
     },
     devtool: 'source-map',
     plugins: [
-        new MiniCssExtractPlugin(),
+        // new MiniCssExtractPlugin(),
         new CopyWebpackPlugin({
             patterns: [
                 { from: path.resolve(__dirname, '../static') }
@@ -29,6 +29,7 @@ module.exports = {
         // new MiniCSSExtractPlugin({
         //     filename: "[name].[contenthash].css",
         // }),
+        new MiniCSSExtractPlugin()
         
     ],
     module: {
@@ -57,9 +58,7 @@ module.exports = {
                 use:
                 [
                     MiniCSSExtractPlugin.loader,
-                    'css-loader',
-                    "postcss-loader",
-                    "sass-loader"
+                    'css-loader'
                 ]
             },
 
@@ -82,9 +81,17 @@ module.exports = {
                 generator: {
                     filename: 'assets/fonts/[hash][ext]'
                 }
-            }
+            },
 
             // Shaders
+            {
+                test: /\.(glsl|vs|fs|vert|frag)$/,
+                type: 'asset/source',
+                generator:
+                {
+                    filename: 'assets/images/[hash][ext]'
+                }
+            }
         ]
     }
 }
