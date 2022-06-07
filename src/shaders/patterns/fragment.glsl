@@ -1,3 +1,5 @@
+#define PI 3.14159265358979323846264338
+
 uniform vec3 uColor;
 uniform sampler2D uTexture;
 
@@ -7,6 +9,15 @@ float random(vec2 st){
     return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43753.5453123);
     // return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
 }
+
+vec2 rotate (vec2 uv, float rotation, vec2 mid) {
+    return vec2(
+        cos(rotation) * (uv.x - mid.x) + sin(rotation) * (uv.y - mid.y) + mid.x ,
+        cos(rotation) * (uv.y - mid.y) - sin(rotation) * (uv.x - mid.x) + mid.y
+    );
+}
+
+
 
 void main() {    
 
@@ -205,12 +216,102 @@ void main() {
     // gl_FragColor = vec4(value, value, value, 1.0);
     
     // Pattern 32
-    vec2 lightUvX = vec2(vUv.x * 0.1 + 0.45, vUv.y * 0.5 + 0.25 );
-    vec2 lightUvY = vec2(vUv.y * 0.1 + 0.45, vUv.x * 0.5 + 0.25 );
-    float valueX = 0.015 / distance(lightUvX, vec2(0.5));
-    float valueY = 0.015 / distance(lightUvY, vec2(0.5));
-    float value = valueX * valueY;
-    gl_FragColor = vec4(value, value, value, 1.0);
 
+    // vec2 rotatedUv = rotate(vUv, PI / 4.0, vec2(0.5));
+   
+    // vec2 lightUvX = vec2(rotatedUv.x * 0.1 + 0.45, rotatedUv.y * 0.5 + 0.25 );
+    // vec2 lightUvY = vec2(rotatedUv.y * 0.1 + 0.45, rotatedUv.x * 0.5 + 0.25 );
+    // float valueX = 0.015 / distance(lightUvX, vec2(0.5));
+    // float valueY = 0.015 / distance(lightUvY, vec2(0.5));
+    // float value = valueX * valueY;
 
+    // gl_FragColor = vec4(value, value, value, 1.0);
+    
+    // Pattern 33
+    // float values = step(0.25, distance(vUv, vec2(0.5)));
+    // gl_FragColor = vec4(values, values, values, 1.0);
+    
+    // Pattern 34
+    // float values = abs(distance(vUv, vec2(0.5)) - 0.25);
+    // gl_FragColor = vec4(values, values, values, 1.0);
+    
+    // Pattern 35
+    // float values = step(0.01, abs(distance(vUv, vec2(0.5)) - 0.25));
+    // gl_FragColor = vec4(values, values, values, 1.0);
+    
+    // Pattern 36
+    // float values = 1.0 - step(0.01, abs(distance(vUv, vec2(0.5)) - 0.25));
+    // gl_FragColor = vec4(values, values, values, 1.0);
+    
+    // Pattern 37
+    // vec2 wavedUv = vec2(
+    //     vUv.x, 
+    //     vUv.y + sin(vUv.x * 30.0) * 0.1
+    // );
+
+    // float values = 1.0 - step(0.01, abs(distance(wavedUv, vec2(0.5)) - 0.25));
+    // gl_FragColor = vec4(values, values, values, 1.0);
+    
+    // Pattern 38
+    // vec2 wavedUv = vec2(
+    //     vUv.x + sin(vUv.y * 30.0) * 0.1, 
+    //     vUv.y + sin(vUv.x * 30.0) * 0.1
+    // );
+
+    // float values = 1.0 - step(0.01, abs(distance(wavedUv, vec2(0.5)) - 0.25));
+    // gl_FragColor = vec4(values, values, values, 1.0);
+    
+    // Pattern 39
+    // vec2 wavedUv = vec2(
+    //     vUv.x + sin(vUv.y * 100.0) * 0.1, 
+    //     vUv.y + sin(vUv.x * 100.0) * 0.1
+    // );
+
+    // float values = 1.0 - step(0.01, abs(distance(wavedUv, vec2(0.5)) - 0.25));
+    // gl_FragColor = vec4(values, values, values, 1.0);
+    
+    // Pattern 40
+    // float angle = atan(vUv.x, vUv.y);
+    // float values = angle;
+    // gl_FragColor = vec4(values, values, values, 1.0);
+    
+    // Pattern 41
+    // float angle = atan(vUv.x - 0.5, vUv.y - 0.5);
+    // float values = angle;
+    // gl_FragColor = vec4(values, values, values, 1.0);
+    
+    // Pattern 42
+    // float angle = atan(vUv.x - 0.5, vUv.y - 0.5);
+    // // ?? float values = (angle / PI * 2.0) + 0.5;
+    // angle /= PI * 2.0;
+    // angle += 0.5;
+    // gl_FragColor = vec4(angle, angle, angle, 1.0);
+    
+    // Pattern 43
+    // float angle = atan(vUv.x - 0.5, vUv.y - 0.5);
+    // angle /= PI * 2.0;
+    // angle += 0.5;
+    // angle *= 30.0;
+    // angle = mod(angle, 1.0);
+    // gl_FragColor = vec4(angle, angle, angle, 1.0);
+    
+    // Pattern 44
+    // float angle = atan(vUv.x - 0.5, vUv.y - 0.5);
+    // angle /= PI * 2.0;
+    // angle += 0.5;
+    // angle = sin(angle * 75.0);
+    // gl_FragColor = vec4(angle, angle, angle, 1.0);
+    
+    // Pattern 45
+
+    // gl_FragColor = vec4(values, values, values, 1.0);
+
+    float angle = atan(vUv.x - 0.5, vUv.y - 0.5);
+    angle /= PI * 2.0;
+    angle += 0.5;
+    float sinusoidal = sin(angle * 100.0);
+    float radius = 0.25 + sinusoidal * 0.02;
+    float values = 1.0 - step(0.01, abs(distance(vUv, vec2(0.5)) - radius));
+
+    gl_FragColor = vec4(values, values, values, 1.0);
 }
