@@ -2,111 +2,136 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 
-import vertexShader from '../shaders/patterns/vertex.glsl'
-import fragmentShader from '../shaders/patterns/fragment.glsl'
+import vertexShader from '../../shaders/rgbshift/vertex.glsl'
+import fragmentShader from '../../shaders/rgbshift/fragment.glsl'
 
-/**
- * Base
- */
-// Debug
-const gui = new dat.GUI()
+// Base Demo
+// https://www.youtube.com/watch?v=DH1KqXQvICQ&ab_channel=YuriArtiukh
 
-// Canvas
-const canvas = document.querySelector('canvas.webgl')
+export default () => {
+    /**
+     * Base
+     */
+    // Debug
+    const gui = new dat.GUI()
 
-// Scene
-const scene = new THREE.Scene()
-
-/**
- * Textures
- */
-const textureLoader = new THREE.TextureLoader()
-const matcapTexture = textureLoader.load('textures/matcaps/8.png')
-
-const planeGeometry = new THREE.PlaneBufferGeometry(1, 1, 32, 32)
-
-const planeMaterial = new THREE.ShaderMaterial({
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader,
-    // side: "dou"
-    uniforms: {
-        uFrequency: { value: new THREE.Vector2(10, 5) },
-        uTime: { value: 0 },
-        uColor: { value: new THREE.Color('orange') },
-        // uTexture: { value: flagTexture }
+    const settings = {
+        progress: 0
     }
-})
 
-const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
+    // gui.add(settings, "progress", 0, 1, 0.01).onChange(() => {
+    //     planeMaterial.uniforms["uProgress"].value = settings['uProgress'];
+    // });
 
-scene.add(planeMesh)
 
 
-/**
- * Sizes
- */
-const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
-}
+    // Canvas
+    const canvas = document.querySelector('canvas.webgl')
 
-window.addEventListener('resize', () =>
-{
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
+    // Scene
+    const scene = new THREE.Scene()
 
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
+    /**
+     * Textures
+     */
+    const textureLoader = new THREE.TextureLoader()
+    const imageTexture = textureLoader.load('textures/texture01.jpeg')
+    const displacementTexture01 = textureLoader.load('textures/displacement01.jpg')
+    const displacementTexture02 = textureLoader.load('textures/displacement02.jpeg')
 
-    // Update renderer
+
+    const planeGeometry = new THREE.PlaneBufferGeometry(1, 1, 32, 32)
+
+    const planeMaterial = new THREE.ShaderMaterial({
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
+        side: THREE.DoubleSide,
+        uniforms: {
+            uDisplacement: { value: displacementTexture01 },
+            uImage: { value: imageTexture },
+            uFrequency: { value: new THREE.Vector2(10, 5) },
+            uProgress: { value: settings.progress },
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color('orange') },
+            // uTexture: { value: flagTexture }
+        }
+    })
+
+    const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
+
+
+    scene.add(planeMesh)
+
+    gui.add(planeMaterial.uniforms.uProgress, "value", 0, 1, 0.01)
+
+    /**
+     * 
+     * 
+     * Sizes
+     */
+    const sizes = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    }
+
+    window.addEventListener('resize', () =>
+    {
+        // Update sizes
+        sizes.width = window.innerWidth
+        sizes.height = window.innerHeight
+
+        // Update camera
+        camera.aspect = sizes.width / sizes.height
+        camera.updateProjectionMatrix()
+
+        // Update renderer
+        renderer.setSize(sizes.width, sizes.height)
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    })
+
+    /**
+     * Camera
+     */
+    // Base camera
+    const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+    camera.position.x = 0
+    camera.position.y = 0
+    camera.position.z = 1.5
+    scene.add(camera)
+
+    // Controls
+    const controls = new OrbitControls(camera, canvas)
+    controls.enableDamping = true
+
+    /**
+     * Renderer
+     */
+    const renderer = new THREE.WebGLRenderer({
+        canvas: canvas
+    })
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-})
 
-/**
- * Camera
- */
-// Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 0
-camera.position.y = 0
-camera.position.z = 1.5
-scene.add(camera)
+    /**
+     * Animate
+     */
+    const clock = new THREE.Clock()
 
-// Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+    const tick = () =>
+    {
+        const elapsedTime = clock.getElapsedTime()
 
-/**
- * Renderer
- */
-const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
-})
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+        // Update controls
+        controls.update()
 
-/**
- * Animate
- */
-const clock = new THREE.Clock()
+        planeMaterial.uniforms.uTime.value = elapsedTime
 
-const tick = () =>
-{
-    const elapsedTime = clock.getElapsedTime()
+        // Render
+        renderer.render(scene, camera)
 
-    // Update controls
-    controls.update()
+        // Call tick again on the next frame
+        window.requestAnimationFrame(tick)
+    }
 
-    planeMaterial.uniforms.uTime.value = elapsedTime
-
-    // Render
-    renderer.render(scene, camera)
-
-    // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
+    tick()
 }
-
-tick()
